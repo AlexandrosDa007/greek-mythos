@@ -1,0 +1,99 @@
+<app-players-hud *ngIf="board?.game" [players]="board.game.players" [user]="user" [minPoints]="board.game.minPoints">
+</app-players-hud>
+
+
+<div *ngIf="user && board && board.game" class="game-window">
+  <div class="board">
+    <div *ngFor="let row of board.rows;let rowIndex = index;trackBy: trackById"
+      class="g-row d-flex w-100 align-items-center justify-content-evenly">
+      <div *ngFor="let cell of row.cells; let colIndex = index;trackBy: trackById" class="d-flex g-cell rounded"
+        [ngClass]="{'big': board.game.isSmall, 'small': !board.game.isSmall}">
+
+        <ng-container *ngTemplateOutlet="image; context: {index: cell.index}"></ng-container>
+
+        <div class="players-container">
+          <div *ngFor="let p of $any(board.game.players | keyvalue); trackBy: trackById" class="player">
+            <img *ngIf="p.value.position === cell.index" [alt]="p.value.name"
+              [src]="'assets/heroes/' +p.value.hero.name + '.png'" class="player-icon">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="canShowDiceAnimation" class="event-container">
+      <app-dice [game]="board.game" [noSound]="settings.effectsMute" [diceResult]="diceResult"
+        (changeSomething)="canShowDiceAnimation = false">
+      </app-dice>
+    </div>
+  </div>
+</div>
+<div class="dice">
+  <button class="die-btn" mat-icon-button [disabled]="!canRoll || activeQuestion || activeGameEvent || !canDoAction"
+    (click)="rollDice()">
+    <mat-icon class="die-icon" svgIcon="die"></mat-icon>
+  </button>
+</div>
+
+<div *ngIf="board?.game?.gameEvent && activeGameEvent" class="event-container">
+  <div class="text-center mb-3" style="font-size: 14pt;" *ngIf="!isMyGameEvent">
+    Ο χρήστης {{board.game.players[board.game.gameEvent.playerUid].displayName}} έπεσε σε γεγονός
+  </div>
+  <h1 class="text-center mt-2">{{!isMyGameEvent ? '"'+board.game.gameEvent.text+'"' : board.game.gameEvent.text }}</h1>
+  <div *ngIf="isMyGameEvent" class="w-75">
+    <mat-progress-bar mode="determinate" [value]="fiveSecondTimer" style="height: 10px;">
+    </mat-progress-bar>
+  </div>
+  <!-- <button *ngIf="isMyGameEvent" (click)="answerGameEvent()">Ok</button> -->
+</div>
+
+<div *ngIf="gameOverPlayer" class="event-container">
+  <h2 *ngIf="gameOverPlayer !== board.game.players[user.uid].displayName"> Ο χρήστης {{gameOverPlayer}} κέρδισε! </h2>
+  <h2 *ngIf="gameOverPlayer === board.game.players[user.uid].displayName"> Κέρδισες </h2>
+  <button mat-raised-button (click)="quitGame()">Έξοδος</button>
+</div>
+
+<div *ngIf="playerTurnName" class="turnname-container">
+  <span *ngIf="playerTurnName === board.game.players[user.uid].displayName">Είναι η σειρά σου</span>
+  <span *ngIf="playerTurnName !== board.game.players[user.uid].displayName">Είναι η σειρά του χρήστη {{playerTurnName}}</span>
+</div>
+
+<ng-template #image let-index="index">
+  <div class="image" *ngIf="gameEventsMap[index] || gameQuestionsMap[index] else showIndex">
+    <img [src]="gameEventsMap[index] ? './assets/ex.png' : gameQuestionsMap[index] ? './assets/q.png' : ''" alt="">
+  </div>
+  <ng-template #showIndex> {{index}} </ng-template>
+
+</ng-template>
+
+<app-question-modal *ngIf="activeQuestion" [game]="board.game" [question]="board.game.question" [user]="user"
+  [canDoAction]="canDoAction" (getHelpEvent)="getHelp($event)" (getRewardEvent)="getReward($event)"
+  (answeringQuestion)="answerQuestion($event)" (qTurnFinished)="qTurnFinished()">
+
+</app-question-modal>
+
+<!-- SETTINGS -->
+<div class="settings-container">
+  <button mat-icon-button class="settings-btn" (click)="showSettings = !showSettings"
+    [style.background]="showSettings ? '#3f99ec' : '#3f99ec80'">
+    <mat-icon class="settings-icon" svgIcon="settings2"></mat-icon>
+  </button>
+</div>
+
+
+<div *ngIf="showSettings" class="event-container">
+  <h1 class="text-center mb-auto mt-3">Ρυθμίσεις</h1>
+
+  <div class="d-flex flex-column w-75 mb-auto">
+    <!-- MUSIC -->
+    <h2 class="text-center">Μουσική</h2>
+    <mat-slider [value]="settings.music * 100" (change)="turnVolume('music',$event.value)"></mat-slider>
+    <!-- SOUND EFFECTS -->
+    <h2 class="text-center">Ηχητικά εφέ</h2>
+    <mat-slider [value]="settings.effects * 100" (change)="turnVolume('effects',$event.value)"></mat-slider>
+
+    <mat-checkbox [checked]="settings.musicMute" (change)="setMute('musicMute', $event.checked)">Σίγαση μουσικής
+    </mat-checkbox>
+    <mat-checkbox [checked]="settings.effectsMute" (change)="setMute('effectsMute', $event.checked)">Σίγαση ηχιτικών εφέ
+    </mat-checkbox>
+  </div>
+</div>

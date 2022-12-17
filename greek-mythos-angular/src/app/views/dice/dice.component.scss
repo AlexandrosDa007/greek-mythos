@@ -1,0 +1,21 @@
+
+
+.dice-container {
+  transform: scale(1.5);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.outside-container {
+  height: 500px;
+
+}
+
+span {
+  color: #3f99ec;
+  line-height: 50px;
+}

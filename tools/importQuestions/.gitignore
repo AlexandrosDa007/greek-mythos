@@ -1,0 +1,5 @@
+# ingore results and data
+/data
+/results
+
+/node_modules

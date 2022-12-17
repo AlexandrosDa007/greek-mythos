@@ -1,0 +1,42 @@
+.f-container {
+    justify-content: space-around;
+    width: 80%;
+    height: 80%;
+    margin: auto;
+    margin-top: 2rem;
+    padding: 20px;
+}
+
+button {
+    outline: 0;
+}
+
+.hr {
+    height: 100%;
+    border-left: 1px solid #c0c0c0;
+}
+
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
+}
+
+.blue {
+    color: blue;
+}
+
+.inGame {
+    color: rgb(221, 210, 55);
+}
+
+.friend {
+    background: gray;
+}
+
+.table-container {
+    max-height: 600px;
+    overflow: auto;
+}

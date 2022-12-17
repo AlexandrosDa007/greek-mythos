@@ -1,0 +1,42 @@
+<h1 class="text-center">Οι φίλοι σου</h1>
+<div *ngIf="friends else showLoader" class="friends-container">
+    <div *ngFor="let friend of friends" class="friend">
+        <div *ngIf="!gameInvites || !gameInvites[friend.uid];else inviteSent" class="d-flex align-items-center">
+            <span>{{friend.displayName}}</span>
+            <button *ngIf="friend.active" class="d-flex align-items-center justify-content-center ml-auto" mat-icon-button
+                (click)="sendInvite(friend.uid)">
+                <mat-icon svgIcon="invite"></mat-icon>
+            </button>
+            <span *ngIf="!friend.active" class="ml-auto">Ανενεργός</span>
+            <!-- {{friend.displayName}} <button (click)="sendInvite(friend.uid)">Invite</button> -->
+        </div>
+        <ng-template #inviteSent>
+            <ng-container *ngIf="gameInvites[friend.uid] && gameInvites[friend.uid].accept === undefined; else accept">
+                {{friend.displayName}} <span class="greyout ml-1">Στάλθηκε η πρόσκληση</span>
+            </ng-container>
+        </ng-template>
+        <ng-template #accept>
+            <div class="d-flex align-items-center">
+                {{friend.displayName}} <span class="ml-1"
+                    [ngClass]="{'accepted': gameInvites[friend.uid].accept, 'declined': !gameInvites[friend.uid].accept}">
+                    {{gameInvites[friend.uid].accept ? 'Αποδέχτηκε' : 'Δεν αποδέχτηκε'}}
+    
+                </span>
+                <button *ngIf="!gameInvites[friend.uid].accept && friend.active" class="d-flex align-items-center justify-content-center ml-auto" mat-icon-button
+                    (click)="sendInvite(friend.uid)">
+                    <mat-icon svgIcon="invite"></mat-icon>
+                </button>
+                <span *ngIf="!friend.active" class="ml-auto">Ανενεργός</span>
+            </div>
+        </ng-template>
+        <hr>
+    </div>
+    <div *ngIf="friends.length === 0">
+        Δεν έχεις φίλους να προσκαλέσεις
+    </div>
+</div>
+
+
+<ng-template #showLoader>
+    <mat-spinner></mat-spinner>
+</ng-template>

@@ -1,0 +1,28 @@
+.background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: -1;
+    margin: 0;
+    padding: 0;
+    background-image: url('../../../assets/background.jpg') ;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px);
+    -webkit-filter: blur(8px);
+}
+
+.description {
+    display: block;
+    display: -webkit-box;
+    max-width: 400px;
+    margin: 0 auto;
+    line-height: 1.2;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+
+}

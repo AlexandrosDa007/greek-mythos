@@ -1,0 +1,16 @@
+{
+  "name": "importquestions",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "kati": "ts-node src/kati.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mersenne-twister": "^1.1.0"
+  }
+}

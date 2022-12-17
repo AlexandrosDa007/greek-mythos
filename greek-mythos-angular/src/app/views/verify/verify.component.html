@@ -1,0 +1,12 @@
+
+<div *ngIf="currentUser" class="elevated-card mx-auto w-50 mt-5 p-5 verify-container">
+    <h2>Ο λογαριασμός σας δεν είναι ενεργοποιημένος</h2>
+    <span>Έχει σταλθεί ενα email επιβεβαίωσης στο <strong>{{currentUser.email}}</strong></span>
+
+    <div class="m-auto d-flex flex-column align-items-center">
+        <span>Αν δεν έχετε λάβει το email, πατήστε το κουμπί για επαναποστολή</span>
+        <button class="mt-5" mat-raised-button (click)="sendVerification()">Στείλε email επιβεβαίωσης</button>
+    </div>
+
+    <button class="ml-auto" color="accent" mat-raised-button (click)="logout()">Αποσύνδεση</button>
+</div>

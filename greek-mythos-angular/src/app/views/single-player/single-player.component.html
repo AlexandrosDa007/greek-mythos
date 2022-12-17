@@ -1,0 +1,147 @@
+<div *ngIf="!started else showGame" class="elevated-card room p-3 w-50 mt-5 ml-auto mr-auto">
+    <div class="d-flex flex-column w-50 m-auto">
+        <h2 class="text-center">Το παιχνίδι σου</h2>
+
+        <hr class="w-100">
+        <div class="d-flex flex-column mb-2">
+            <h3 class="mb-2">Μέγεθος παιχνιδού</h3>
+            <mat-radio-group name="smallRadio" [(ngModel)]="newGame.isSmall">
+                <mat-radio-button class="mr-2" [value]="true">Μικρό</mat-radio-button>
+                <mat-radio-button [value]="false">Μεγάλο</mat-radio-button>
+            </mat-radio-group>
+        </div>
+        <hr class="w-100">
+        <mat-form-field appearance="fill">
+            <mat-label>Πόντοι-Στόχος</mat-label>
+            <input matInput required type="number" [(ngModel)]="newGame.minPoints" min="0">
+        </mat-form-field>
+        <hr class="w-100">
+        <div class="d-flex flex-column">
+            <h3>Μέγιστος αριθμός βοηθειών</h3>
+            <mat-form-field appearance="fill">
+                <mat-label>Βοήθεια 50/50</mat-label>
+                <input matInput required type="number" [(ngModel)]="newGame.maxHelps.help_50" min="0">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Βοήθεια πάσο</mat-label>
+                <input matInput required type="number" [(ngModel)]="newGame.maxHelps.skip" min="0">
+            </mat-form-field>
+        </div>
+        <div class="d-flex align-items-center justify-content-center">
+
+            <button mat-raised-button class="create-btn" (click)="startGame()"> Παίξε </button>
+        </div>
+    </div>
+</div>
+
+<ng-template #showGame>
+
+    <app-players-hud *ngIf="board?.game" [minPoints]="board.game.minPoints" [players]="board.game.players"
+        [user]="user"></app-players-hud>
+    <!-- <div *ngIf="board?.game" class="d-flex flex-column position-absolute hud">
+        <div class="d-flex align-items-center w-100"
+            *ngFor="let player of $any(board.game.players | keyvalue);trackBy: trackById"
+            [style.textDecoration]="player.value.uid === user.uid ? 'underline' : ''">
+            <span>{{player.value.displayName}} : {{player.value.points ? player.value.points : 0}}</span>
+            <img class="ml-auto" [src]="'assets/heroes/'+player.value.hero.name+'.png'" width="25px" height="25px">
+        </div>
+
+    </div> -->
+
+    <div *ngIf="board && board.game" class="game-window">
+        <div class="board">
+            <div *ngFor="let row of board.rows;let rowIndex = index;"
+                class="g-row d-flex w-100 align-items-center justify-content-evenly">
+                <div *ngFor="let cell of row.cells; let colIndex = index;" class="d-flex g-cell rounded"
+                    [ngClass]="{'big': board.game.isSmall, 'small': !board.game.isSmall}">
+
+                    <ng-container *ngTemplateOutlet="image; context: {index: cell.index}"></ng-container>
+
+                    <div class="players-container">
+                        <div *ngFor="let p of $any(board.game.players | keyvalue); trackBy: trackById" class="player">
+                            <img *ngIf="p.value.position === cell.index" [alt]="p.value.name"
+                                [src]="'assets/heroes/' +p.value.hero.name + '.png'" class="player-icon">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="canShowDiceAnimation" class="event-container">
+                <app-dice [isSinglePlayer]="true" [game]="board.game" [noSound]="settings.effectsMute"
+                    [diceResult]="diceResult" (changeSomething)="canShowDiceAnimation = false">
+                </app-dice>
+            </div>
+        </div>
+    </div>
+    <div class="turnname-container">
+        <span *ngIf="turnPlayer === user.displayName">Είναι η σειρά σου</span>
+        <span *ngIf="turnPlayer === 'Υπολογιστής'">Είναι η σειρά του Υπολογιστή</span>
+    </div>
+    <div class="dice">
+        <button class="die-btn" mat-icon-button [disabled]="!canRoll" (click)="rollDice(this.user.uid)">
+            <mat-icon class="die-icon" svgIcon="die"></mat-icon>
+        </button>
+    </div>
+    <app-question-modal *ngIf="activeQuestion" [game]="board.game" [question]="board.game.question" [user]="user"
+        [canDoAction]="canDoAction" (getHelpEvent)="getHelp($event)" (getRewardEvent)="getReward($event)"
+        (answeringQuestion)="answerQuestion($event)" (qTurnFinished)="qTurnFinished()" [IS_SINGLE]="true">
+
+    </app-question-modal>
+
+
+    <div *ngIf="gameOverPlayer" class="event-container">
+        <h2>  {{gameOverPlayer === 'Υπολογιστής' ? 'Ο Υπολογιστής κέρδισε!' : 'Κέρδισες!'}}</h2>
+        <button mat-raised-button (click)="quitGame()">Έξοδος</button>
+    </div>
+
+    <div *ngIf="activeGameEvent" class="event-container">
+        <div class="text-center mb-3" style="font-size: 14pt;" *ngIf="!isMyGameEvent">
+            Ο {{activeGameEvent.playerUid === 'bot' ? 'Υπολογιστής' : ' χρήστης '+board.game.players[activeGameEvent.playerUid].displayName}} έπεσε σε γεγονός
+        </div>
+        <h1 class="text-center mt-2">{{!isMyGameEvent ? '"'+activeGameEvent.text+'"' : activeGameEvent.text }}
+        </h1>
+        <div *ngIf="isMyGameEvent" class="w-75">
+            <mat-progress-bar mode="determinate" [value]="fiveSecondTimer" style="height: 10px;">
+            </mat-progress-bar>
+        </div>
+        <!-- <button *ngIf="isMyGameEvent" (click)="answerGameEvent()">Ok</button> -->
+    </div>
+
+    <div class="settings-container">
+        <button mat-icon-button class="settings-btn" (click)="showSettings = !showSettings"
+            [style.background]="showSettings ? '#3f99ec' : '#3f99ec80'">
+            <mat-icon class="settings-icon" svgIcon="settings2"></mat-icon>
+        </button>
+    </div>
+
+    <div *ngIf="showSettings" class="event-container">
+        <h1 class="text-center mb-auto mt-3">Ρυθμίσεις</h1>
+
+        <div class="d-flex flex-column w-75 mb-auto">
+            <!-- MUSIC -->
+            <h2 class="text-center">Μουσική</h2>
+            <mat-slider [value]="settings.music * 100" (change)="turnVolume('music',$event.value)"></mat-slider>
+            <!-- SOUND EFFECTS -->
+            <h2 class="text-center">Ηχητικά εφέ</h2>
+            <mat-slider [value]="settings.effects * 100" (change)="turnVolume('effects',$event.value)"></mat-slider>
+
+            <mat-checkbox [checked]="settings.musicMute" (change)="setMute('musicMute', $event.checked)">Σίγαση μουσικής
+            </mat-checkbox>
+            <mat-checkbox [checked]="settings.effectsMute" (change)="setMute('effectsMute', $event.checked)">Σίγαση
+                ηχητικών
+                εφέ</mat-checkbox>
+        </div>
+    </div>
+
+
+
+    <ng-template #image let-index="index">
+        <div class="image" *ngIf="gameEventsMap[index] || gameQuestionsMap[index] else showIndex">
+            <img [src]="gameEventsMap[index] ? './assets/ex.png' : gameQuestionsMap[index] ? './assets/q.png' : ''"
+                alt="">
+        </div>
+        <ng-template #showIndex> {{index}} </ng-template>
+
+    </ng-template>
+
+</ng-template>

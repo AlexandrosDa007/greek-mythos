@@ -1,0 +1,95 @@
+:host { 
+    width: 100%;
+}
+
+button {
+    outline: 0;
+}
+
+.invite-icon {
+    width: 25px;
+    height: 35px;
+}
+
+.isHost {
+    border: 1px solid rgb(238, 235, 57);
+}
+
+.ready {
+    margin-left: 25px;
+}
+
+.room {
+    width: 60%;
+    margin: auto;
+    background: white;
+    text-align: center;
+    padding-bottom: 50px;
+    box-shadow: 0px 0px 8px 2px rgba(0, 0, 0, 0.5);
+}
+
+.players{
+    width: 100%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.kick-btn {
+    background: #cd3c3c;
+    border: none;
+    cursor: pointer;
+    border-radius: 20px;
+    padding: 5px 20px;
+    color: white;
+    outline: 0;
+}
+
+.kick-btn:hover, .leave-btn:hover, .start-btn:hover {
+    box-shadow: 0px 0px 4px 2px rgba($color: #000000, $alpha: 0.3);
+}
+
+.player-set {
+    width: 300px;
+    padding: 20px;
+    background: #e5e5e5;
+    margin: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.player {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+}
+
+.player > span {
+    margin-bottom: 10px;
+}
+
+.leave-btn {
+    border: none;
+    background: #5858d1;
+    color: white;
+    padding: 10px 40px;
+    border-radius: 20px;
+    margin-top: 50px;
+    cursor: pointer;
+    outline: 0;
+}
+
+.start-btn {
+    border: none;
+    background: #36c836;
+    color: white;
+    padding: 10px 40px;
+    border-radius: 20px;
+    margin-top: 50px;
+    cursor: pointer;
+    outline: 0;
+    margin-left: 50px;
+}

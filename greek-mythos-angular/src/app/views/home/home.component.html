@@ -1,0 +1,22 @@
+<div class="w-100 h-100 position-relative">
+    <div class="background"></div>
+    <div class="h-100 d-flex flex-column text-center text-white">
+        <h2 class="p-3">Καλως ήρθατε στο Greek-Mythos</h2>
+        <p>
+            Το πιο διαδραστικό παιχνίδι εκμάθησης της Ελληνικής Μυθολογίας.
+
+        </p>
+
+        <h3> Οι ήρωές μας </h3>
+        <div *ngFor="let hero of heroes" class="m-auto w-75 d-flex justify-content-around align-items-center">
+            <img class="mr-2" [src]="hero.image" width="100px" height="100px" alt="">
+            <span class="mr-2">{{hero.name}}</span>
+            <span class="description">{{hero.description}}</span>
+        </div>
+
+        <div class="mt-auto d-flex ml-2">Αυτό το παιχνίδι δημιουργήθηκε για την πτυχιακή εργασία του φοιτητή
+            <strong class="text-dark ml-2">Αλέξανδρου Δάλτση</strong>
+            <a class="ml-auto mr-2" href="mailto:info.alexdaltsis@gmail.com?subject=Bug Report">Πρόβλημα? Επικοινώνησε μαζί μου</a>
+        </div>
+    </div>
+</div>

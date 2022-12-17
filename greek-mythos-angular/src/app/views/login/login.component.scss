@@ -1,0 +1,33 @@
+.error {
+    color: red;
+    font-size: large;
+    font-style: italic;
+
+}
+
+.login-btn {
+    width: 100px;
+    margin: auto;
+}
+
+.login-container {
+    width: 400px;
+    height: 400px;
+    margin: auto;
+}
+
+button {
+    outline: 0;
+}
+
+.login {
+    background-image: url('../../../assets/login.png');
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-repeat: no-repeat;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    z-index: -10;
+}

@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "greek-mythos"
+  },
+  "targets": {
+    "greek-mythos": {
+      "hosting": {
+        "greek-mythos-angular": [
+          "greek-mythos"
+        ]
+      }
+    }
+  }
+}

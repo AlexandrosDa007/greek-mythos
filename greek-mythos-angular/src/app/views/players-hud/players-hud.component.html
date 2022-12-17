@@ -1,0 +1,13 @@
+<div class="d-flex flex-column position-absolute hud" [style.width]="expanded ? '300px' : '100px'">
+    <span>Στόχος: {{minPoints}}</span>
+    <div class="mt-2 d-flex align-items-center w-100"
+        *ngFor="let player of $any(players | keyvalue);trackBy: trackById"
+        [style.textDecoration]="player.value.uid === user.uid ? 'underline' : ''">
+        <img class="mr-2" [src]="'assets/heroes/'+player.value.hero.name+'.png'" width="25px" height="25px">
+        <span *ngIf="expanded">{{player.value.displayName}} : {{player.value.points ? player.value.points : 0}}</span>
+        <span *ngIf="!expanded"> {{player.value.points}} </span>
+    </div>
+    <button mat-icon-button>
+        <mat-icon (click)="expanded = !expanded">{{expanded ? 'minimize' : 'open_in_full'}}</mat-icon>
+    </button>
+</div>

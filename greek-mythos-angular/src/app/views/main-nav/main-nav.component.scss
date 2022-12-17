@@ -1,0 +1,86 @@
+
+
+$navbar-color: #3f99ec;
+$nav-item-pressed: #286aa8;
+$nav-item-text: #000000;
+$nav-item-highlight-text: #ffffff;
+$error-red: rgb(161, 29, 29);
+
+.nav-container {
+    width: 200px;
+    height: 100%;
+    // background: rgb(75, 75, 153);
+    background: $navbar-color;
+    box-shadow: 1px 0px 8px 2px rgb(0 0 0 / 40%);
+}
+
+.active {
+    background: $nav-item-pressed;
+    color: $nav-item-highlight-text;
+}
+
+.red {
+    color: $error-red;
+}
+
+mat-icon {
+    cursor: pointer;
+}
+
+ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+}
+
+li {
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+    color: $nav-item-text;
+    padding: 20px;
+    
+}
+
+li:not(:last-child) {
+    border-bottom: 1px solid black;
+}
+
+li:focus {
+    outline: 0;
+    border: none;
+}
+
+li:hover {
+    cursor: pointer;
+    background: $nav-item-pressed;
+    color: white;
+}
+
+.logout-btn {
+    margin-top: auto;
+    margin-bottom: 50px;
+}
+
+::ng-deep .mat-menu-panel {
+    max-width: none !important;
+}
+
+.invite-container {
+    width: 100%;
+    padding: 15px;
+}
+
+button {
+    outline: 0;
+}
+
+.act-btn {
+    padding: 15px 25px;
+    background: grey;
+}

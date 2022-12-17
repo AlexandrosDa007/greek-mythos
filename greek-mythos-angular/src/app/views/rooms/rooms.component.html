@@ -1,0 +1,93 @@
+<div *ngIf="showRooms else showCreateRoom" class="row m-auto justify-content-center">
+    <div class="elevated-card room col-md-3">
+        <h2 class="text-center">Δημιουργία Δωματίου</h2>
+        <button class="plus-btn" mat-icon-button (click)="showRooms = false">
+            <mat-icon class="plus-icon" svgIcon="plus"></mat-icon>
+        </button>
+    </div>
+    <div *ngFor="let room of rooms; trackBy: trackById"
+        class="elevated-card room align-items-center col-md-3">
+        <h2> {{room.name}} </h2>
+        <div class="d-flex flex-column w-100">
+            <!-- Game size -->
+            <div>
+                <span>Μέγεθος παιχνιδιού:</span>
+                <span class="right-side"><strong>{{room.isSmall ? 'Μικρό' : 'Μεγάλο'}}</strong></span>
+            </div>
+            <!-- Game players -->
+            <div>
+                <span>Παίκτες:</span>
+                <span class="right-side"
+                    [ngClass]="{'hard': room.actP === room.max}"><strong>{{room.actP}}/{{room.max}}</strong></span>
+            </div>
+            <!-- Game min points -->
+            <div>
+                <span>Πόντοι-Στόχος:</span>
+                <span class="right-side"><strong>{{room.minPoints}}</strong></span>
+            </div>
+            <!-- Help 50/50 -->
+            <div>
+                <span>Βοήθεια 50/50: </span>
+                <span class="right-side"><strong>{{room.maxHelps.help_50}}</strong></span>
+            </div>
+            <!-- Help skip -->
+            <div>
+                <span>Βοήθεια πάσο: </span>
+                <span class="right-side"><strong>{{room.maxHelps.skip}}</strong></span>
+            </div>
+        </div>
+
+        <button [disabled]="inGame || joining" class='join-btn' (click)="joinRoom(room)"> Σύνδεση </button>
+    </div>
+</div>
+
+<ng-template #showCreateRoom>
+    <div class="elevated-card room p-3 w-50 mt-5 ml-auto mr-auto">
+        <div *ngIf="newRoom" class="d-flex flex-column w-50 m-auto">
+            <h2 class="text-center">Δημιουργία δωματίου</h2>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Όνομα δωματίου</mat-label>
+                <input [(ngModel)]="newRoom.name" name="roomName" matInput required>
+                <mat-error *ngIf="newRoom.name.length === 0">Μέγεθος ονόματος πάνω απο 3 χαρακτήρες</mat-error>
+            </mat-form-field>
+            <hr class="w-100">
+            <div class="d-flex flex-column mb-2">
+                <h3 class="mb-2">Μέγεθος δωματίου</h3>
+                <mat-radio-group name="smallRadio" [(ngModel)]="newRoom.isSmall">
+                    <mat-radio-button class="mr-2" [value]="true">Μικρό</mat-radio-button>
+                    <mat-radio-button [value]="false">Μεγάλο</mat-radio-button>
+                </mat-radio-group>
+            </div>
+            <hr class="w-100">
+            <mat-form-field appearance="fill">
+                <mat-label>Μέγιστος αριθμός παικτών</mat-label>
+                <input matInput required type="number" [(ngModel)]="newRoom.max" min="2" max="4">
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Πόντοι-Στόχος</mat-label>
+                <input matInput required type="number" [(ngModel)]="newRoom.minPoints" min="0">
+            </mat-form-field>
+            <hr class="w-100">
+            <div class="d-flex flex-column">
+                <h3>Μέγιστος αριθμός βοηθειών</h3>
+                <mat-form-field appearance="fill">
+                    <mat-label>Βοήθεια 50/50</mat-label>
+                    <input matInput required type="number" [(ngModel)]="newRoom.maxHelps.help_50" min="0">
+                </mat-form-field>
+                <mat-form-field appearance="fill">
+                    <mat-label>Βοήθεια πάσο</mat-label>
+                    <input matInput required type="number" [(ngModel)]="newRoom.maxHelps.skip" min="0">
+                </mat-form-field>
+            </div>
+            <div class="d-flex align-items-center">
+                <button mat-icon-button (click)="showRooms = true">
+                    <mat-icon svgIcon="back_button"></mat-icon>
+                </button>
+                <button mat-raised-button class="create-btn" (click)="createRoom()"> Δημιουργία </button>
+            </div>
+        </div>
+        <span *ngIf="errorMessage" class="error"> {{errorMessage}} </span>
+    </div>
+</ng-template>

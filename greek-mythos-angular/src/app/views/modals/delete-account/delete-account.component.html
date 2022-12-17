@@ -1,0 +1,22 @@
+<div class="d-flex flex-column p-3 h-100">
+    <h3>Σίγουρα θέλεις να διαγράψεις τον λογαριασμό σου? <u>Δεν</u> υπάρχει τρόπος ανάκτησης!</h3>
+
+    <span>Πρέπει να συμπληρώσεις τα στοιχεία σου για να συνεχίσεις</span>
+    <mat-form-field class="mt-2" appearance="fill">
+        <mat-label>Το email σου</mat-label>
+        <input required matInput type="email" email [(ngModel)]="email">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+        <mat-label>Ο κωδικός σου</mat-label>
+        <input matInput [(ngModel)]="password" [type]="hide ? 'password' : 'text'">
+        <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hide">
+            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+    </mat-form-field>
+
+    <div class="mt-auto d-flex justify-content-around">
+        <button mat-raised-button (click)="cancel()">Άκυρο</button>
+        <button [disabled]="canDelete > 0" mat-raised-button color="warn" (click)="deleteAccount()">Διαγραφή {{canDelete > 0 ? 'σε '+canDelete : ''}}</button>
+    </div>
+</div>

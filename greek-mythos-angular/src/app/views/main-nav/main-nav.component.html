@@ -1,0 +1,65 @@
+<div class="nav-container">
+    <ul>
+        <li mat-raised-button routerLink="home" routerLinkActive="active"><a>Αρχική</a></li>
+        <li routerLink="single-player" routerLinkActive="active"><a>Παιχνίδι με Η/Υ </a> </li>
+        <li routerLink="rooms" routerLinkActive="active"> <a>Δωμάτια</a> </li>
+        <li routerLink="profile" routerLinkActive="active"> <a>Προφίλ</a> </li>
+        <li routerLink="friends" routerLinkActive="active"><a>Φίλοι</a></li>
+        <!-- <li routerLink="room/room1" routerLinkActive="active"><a>game</a> </li> -->
+        <!-- INVITES -->
+        <div class="mt-4 d-flex align-items-center">
+            <span>Προσκλήσεις</span>
+            <mat-icon class="ml-1" [matMenuTriggerFor]="menu" [matBadge]="gameInvitesLength !== 0 ? gameInvitesLength : ''" matBadgeColor="warn">email
+            </mat-icon>
+        </div>
+        <div class="mt-4 d-flex align-items-center">
+            <span>Αιτήματα φιλίας</span>
+            <mat-icon class="ml-1" [matMenuTriggerFor]="friendMenu" [matBadge]="pendingFriendInvitesLength !== 0 ? pendingFriendInvitesLength : ''" matBadgeColor="primary">email
+            </mat-icon>
+        </div>
+        <div class="mt-3 d-flex align-items-center" *ngIf="inGame && inGameWindow === false">
+            <span>Σε παιχνίδι</span>
+    
+            <mat-icon *ngIf="inGame" [matMenuTriggerFor]="inGameMenu" [matBadge]="1" matBadgeColor="accent">warning</mat-icon>
+        </div> 
+        <li class="logout-btn" (click)="logout()"> <a>Αποσύνδεση</a> </li>
+        <!-- <div>Icons made by <a href="https://www.flaticon.com/authors/mavadee" title="mavadee">mavadee</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div> -->
+    </ul>
+
+</div>
+
+<mat-menu #menu="matMenu">
+    <div *ngIf="gameInvitesLength !== 0" class="d-flex flex-column w-100">
+        <div *ngFor="let invite of $any(gameInvites |keyvalue)" class="invite-container">
+            <span class="mr-1">Ο <strong>{{invite.value.dn}}</strong> σας προσκάλεσε στο <strong>{{invite.value.roomName}}</strong></span>
+            <button class="p-2 mr-1" mat-raised-button *ngIf="invite.value.accept === undefined" (click)="$event.stopPropagation();joinGame(invite.value.roomId, invite.key)">Αποδοχή</button>
+            <button class="p-2" mat-raised-button *ngIf="invite.value.accept === undefined" (click)="$event.stopPropagation();declineInvite(invite.key)">Απόρριψη</button>
+            <span class="red" *ngIf="invite.value.accept === false">Απορρίφθηκε</span>
+        </div>
+    </div>
+    <div *ngIf="gameInvitesLength === 0" class="p-2">
+        Δεν υπάρχουν προσκλήσεις
+    </div>
+</mat-menu>
+
+
+<mat-menu #friendMenu="matMenu">
+    <div *ngIf="pendingFriendInvitesLength !== 0" class="d-flex flex-column w-100">
+        <div *ngFor="let invite of $any(pendingFriendInvites |keyvalue)" class="invite-container">
+            <span class="mr-1">O <strong>{{invite.value.displayName}}</strong> σου έστειλε αίτημα φιλίας</span>
+            <button class="p-2 mr-1" mat-raised-button *ngIf="invite.value.invite === true" (click)="acceptFriend(invite.key, invite.value.displayName)">Αποδοχή</button>
+            <button class="p-2" mat-raised-button *ngIf="invite.value.invite === true" (click)="declineFriend(invite.key)">Απόρριψη</button>
+        </div>
+    </div>
+    <div *ngIf="pendingFriendInvitesLength === 0" class="p-2">
+        Δεν υπάρχουν αιτήματα φιλίας
+    </div>
+</mat-menu>
+
+
+<mat-menu #inGameMenu="matMenu">
+    <div class="p-2">
+        Χρόνος που πέρασε: {{gameTimer}}
+        <button class="p-2" mat-raised-button (click)="returnToGame()">Επιστροφή</button>
+    </div>
+</mat-menu>

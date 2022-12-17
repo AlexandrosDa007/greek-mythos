@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body,html {
+  height: 100%;
+  font-family: Roboto;
+  background-color: #ebebeb;
+}
+
+#app {
+  height: 100%;
+}
+
+input[type="radio"] {
+  -webkit-appearance: none;
+  position: relative;
+}
+
+input[type="radio"]:after {
+  background-color: white;
+  border-radius: 25px;
+  content: '';
+  display: block;
+  height: 15px;
+  position: relative;
+  top: 0px;
+  width: 15px;
+  border: 1px solid black;
+}
+
+input[type="radio"]:checked:after {
+  background-color: rgb(63,153,236);
+  box-shadow: 0 2px 2px 0 black;
+  transition: background-color 200ms ease-in;
+}

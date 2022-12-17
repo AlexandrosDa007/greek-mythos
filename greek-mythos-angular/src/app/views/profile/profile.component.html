@@ -1,0 +1,53 @@
+<div class="elevated-card profile-container" *ngIf="user">
+    <!-- INFO -->
+    <h2 class="text-center my-2">Γειά σου {{user.displayName}}</h2>
+
+    <!-- PROFILE IMG -->
+    <div class="d-flex flex-column">
+        <h3>Εικόνα προφίλ</h3>
+        <div class="d-flex">
+            <app-profile-img [imgUrl]="imageUrl"></app-profile-img>
+            <mat-icon *ngIf="user.imageUrl" (click)="removeImage()">delete</mat-icon>
+        </div>
+    </div>
+    <input #imageInput type="file" accept="image/*" (change)="processImage(imageInput)" hidden>
+    <button class="mt-2" mat-raised-button (click)="imageInput.click()">
+        <span>Μεταφόρτωση</span>
+        <mat-icon class="upload-icon" svgIcon="upload"></mat-icon>
+    </button>
+    <hr class="w-100">
+    <!-- NAME -->
+    <h3>Όνομα λογαριασμού</h3>
+    <div class="d-flex flex-column mt-3">
+        <mat-form-field appearance="fill">
+            <mat-label>Όνομα</mat-label>
+            <input matInput required [(ngModel)]="user.displayName">
+            <mat-error *ngIf="!user.displayName || user.displayName.length < 2 || user.displayName.length > 40">Τό όνομα
+                πρέπει να είναι μεταξύ 3 και 40 χαρακτήρων</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="mt-2" appearance="fill">
+            <mat-label>Email</mat-label>
+            <input disabled="true" matInput required [(ngModel)]="user.email">
+        </mat-form-field>
+    </div>
+    <button mat-raised-button (click)="updateProfile()">Ενημέρωση</button>
+    <hr class="w-100">
+    <!-- GAMES -->
+    <div class="mt-3 mb-3 d-flex flex-column align-items-center" *ngIf="user.gamesPlayed">
+        <!-- <span>Games Played</span> <br> -->
+        <span>Νίκες / Ήττες</span> <br>
+        <div>
+            <span class="blue"> {{user.gamesWon ? user.gamesWon : 0}} </span> /
+            <span class="red">{{user.gamesPlayed - (user.gamesWon ? user.gamesWon : 0)}}</span>
+        </div>
+    </div>
+    <hr *ngIf="user.gamesPlayed" class="w-100">
+    <!-- DANGER ZONE -->
+    <div class=" w-75 mt-3 mb-5 d-flex justify-content-around">
+        <button mat-raised-button color="accent" (click)="changePassword()">Αλλαγή κωδικού</button>
+        <button mat-raised-button color="warn" (click)="deleteMyAccount()">
+            Διαγραφή λογαριασμού
+        </button>
+    </div>
+</div>

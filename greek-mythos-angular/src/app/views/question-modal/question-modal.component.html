@@ -1,0 +1,283 @@
+<div class="question-container">
+
+    <ng-container [ngSwitch]="question.state">
+        <ng-template [ngSwitchCase]="'waitingAns'">
+            <!-- <span class="question-text"> {{question.question.text}} </span> -->
+            <h1 class="text-center mt-2">{{ question.question.text }}</h1>
+            <div class="d-flex flex-column p-4 w-100 mb-auto">
+                <div class="d-flex justify-content-between mb-3">
+                    <button [disabled]="!isMyQuestion || !canDoAction || (question.question.answer !== undefined && question.question.answers.length === 4)" mat-raised-button (click)="answerQuestion(question.question.answers[0])">
+                        {{question.question.answers[0]}}
+                    </button>
+                    <button [disabled]="!isMyQuestion || !canDoAction || (question.question.answer !== undefined && question.question.answers.length === 4)" mat-raised-button (click)="answerQuestion(question.question.answers[1])">
+                        {{question.question.answers[1]}}
+                    </button>
+                </div>
+                <div *ngIf="question.question.answers.length === 4" class="d-flex justify-content-between">
+                    <button [disabled]="!isMyQuestion || !canDoAction || (question.question.answer !== undefined && question.question.answers.length === 4)" mat-raised-button (click)="answerQuestion(question.question.answers[2])">
+                        {{question.question.answers[2]}}
+                    </button>
+                    <button [disabled]="!isMyQuestion || !canDoAction || (question.question.answer !== undefined && question.question.answers.length === 4)" mat-raised-button (click)="answerQuestion(question.question.answers[3])">
+                        {{question.question.answers[3]}}
+                    </button>
+                </div>
+                <!-- <button [disabled]="!isMyQuestion" *ngFor="let ans of question.question.answers"
+                    (click)="answerQuestion(ans)" class="answer">
+                    {{ans}} </button> -->
+                <div class="d-flex flex-column align-items-center mt-1"
+                    *ngIf="isMyQuestion && question.question.answers.length == 4">
+                    <h1>Βοήθειες</h1>
+                    <div class="d-flex w-100 justify-content-between">
+                        <button mat-raised-button [disabled]="!canGetHelp('help_50')" (click)="getHelp('help_50')">50/50
+                            <span style="color: #c12c2c;">(-{{help.help_50}} πόντους)</span> <br>
+                            {{game.players[user.uid].helpUsed.help_50}} / {{game.maxHelps.help_50}}
+                        </button>
+                        <button mat-raised-button [disabled]="!canGetHelp('help_skip')"
+                            (click)="getHelp('help_skip')">Πάσο
+                            <span style="color: #c12c2c;">(-{{help.skip}} πόντους)</span> <br>
+                            {{game.players[user.uid].helpUsed.skip}} / {{game.maxHelps.skip}}
+                        </button>
+                    </div>
+                </div>
+                <h1 *ngIf="question.question.answers.length !== 4" class="text-center mt-2" style="color: #3f99ec;">Χρησιμοποιήθηκε η βοήθεια 50/50</h1>
+            </div>
+            <div *ngIf="!isMyQuestion" class="p-4 mb-4" style="color: #3f99ec; font-size: 14pt;">
+                Αναμένεται απάντηση απο {{IS_SINGLE ? 'τον Υπολογιστή' :  'τον '+game.players[game.question.playerUid].displayName}}
+            </div>
+            <div *ngIf="qTimer && (isMyQuestion || IS_SINGLE)" class="w-75">
+               <mat-progress-bar class="mb-3" mode="determinate" [value]="qTimer"></mat-progress-bar>
+            </div>
+        </ng-template>
+        <ng-template [ngSwitchCase]="'answered'">
+
+            <h1 class="text-center mt-2">{{ question.question.text }}</h1>
+            <div class="d-flex flex-column p-4 w-100 mb-auto">
+                <div class="d-flex justify-content-between mb-3">
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[0])"
+                    [ngClass]="question.question.answers[0] === question.question.answer ? 'correct' : ''">
+                        {{question.question.answers[0]}}
+                    </button>
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[1])"
+                    [ngClass]="question.question.answers[1] === question.question.answer ? 'correct' : ''">
+                        {{question.question.answers[1]}}
+                    </button>
+                </div>
+                <div *ngIf="question.question.answers.length === 4" class="d-flex justify-content-between">
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[2])"
+                    [ngClass]="question.question.answers[2] === question.question.answer ? 'correct' : ''">
+                        {{question.question.answers[2]}}
+                    </button>
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[3])"
+                    [ngClass]="question.question.answers[3] === question.question.answer ? 'correct' : ''">
+                        {{question.question.answers[3]}}
+                    </button>
+                </div>
+                <!-- <button [disabled]="true" *ngFor="let ans of question.question.answers" (click)="answerQuestion(ans)"
+                    class="answer" [ngClass]="ans === question.question.answer ? 'correct' : ''">
+                    {{ans}} </button> -->
+                    <h1 *ngIf="isMyQuestion" class="text-center mt-1" style="color: green;">
+                        Απάντησες σωστά
+                    </h1>
+                    <h1 *ngIf="!isMyQuestion" class="text-center mt-1" style="color: #3f99ec;">
+                        Ο {{game.players[game.question.playerUid].displayName}} απάντησε σωστά την ερώτηση,
+                        αναμένεται επιλογή κίνησης
+                    </h1>
+                <div *ngIf="isMyQuestion" class="d-flex w-100 justify-content-between">
+                    <button mat-raised-button [disabled]="!canDoAction " (click)="getReward('move')">Πάνε {{diffToStepsMap[question.question.diff]}} μπροστά</button>
+                    <button mat-raised-button [disabled]="!canDoAction " (click)="getReward('points')">Πάρε
+                        {{question.question.qPoints}}
+                        πόντους</button>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template [ngSwitchCase]="'failed'">
+            <h1 class="text-center mt-2">{{ question.question.text }}</h1>
+            <div class="d-flex flex-column p-4 w-100 mb-auto">
+
+                <div class="d-flex justify-content-between mb-3">
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[0])"
+                    [ngClass]="question.question.answer === question.question.answers[0] ? 'wrong' : question.question.answers[0] === question.question.correct ? 'correct' : ''">
+                        {{question.question.answers[0]}}
+                    </button>
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[1])"
+                    [ngClass]="question.question.answer === question.question.answers[1] ? 'wrong' : question.question.answers[1] === question.question.correct ? 'correct' : ''">
+                        {{question.question.answers[1]}}
+                    </button>
+                </div>
+                <div *ngIf="question.question.answers.length === 4" class="d-flex justify-content-between">
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[2])"
+                        [ngClass]="question.question.answer === question.question.answers[2] ? 'wrong' : question.question.answers[2] === question.question.correct ? 'correct' : ''">
+                        {{question.question.answers[2]}}
+                    </button>
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[3])"
+                    [ngClass]="question.question.answer === question.question.answers[3] ? 'wrong' : question.question.answers[3] === question.question.correct ? 'correct' : ''">
+                        {{question.question.answers[3]}}
+                    </button>
+                </div>
+
+                <!-- <button [disabled]="true" *ngFor="let ans of question.question.answers" (click)="answerQuestion(ans)"
+                    class="answer"
+                    [ngClass]="question.question.answer === ans ? 'wrong' : ans === question.question.correct ? 'correct' : ''">
+                    {{ans}} </button> -->
+                    <h1 class="text-center mt-2" *ngIf="isMyQuestion" style="color: #c12c2c;">Απάντησες λάθος</h1>
+                    <h1 class="text-center mt-2" *ngIf="!isMyQuestion" style="color: #c12c2c;">
+                        Ο {{game.players[game.question.playerUid].displayName}} απάντησε λάθος
+                    </h1>
+                <div *ngIf="isMyQuestion" class="d-flex align-items-center justify-content-between w-100 mt-1">
+                    <button mat-raised-button [disabled]="!canDoAction " (click)="getReward('go_back')">Πάνε πίσω </button>
+                    <button mat-raised-button [disabled]="!canDoAction || (game.players[user.uid].points < question.question.qPoints)"
+                        (click)="getReward('remove_points')">- {{question.question.qPoints}}
+                        πόντους</button>
+                </div>
+            </div>
+        </ng-template>
+
+        <ng-template [ngSwitchCase]="'skipped'">
+            <h1 *ngIf="isMyQuestion" class="text-center mt-2" style="color: #3f99ec;">
+                Χρησιμοποίησες πάσο
+            </h1>
+            <h1 *ngIf="!isMyQuestion" class="text-center mt-2" style="color: #3f99ec;">
+                Ο {{game.players[game.question.playerUid].displayName}} χρησιμοποίησε πάσο
+            </h1>
+        </ng-template>
+
+        <ng-template [ngSwitchCase]="'finishedM'">
+            <h1 class="text-center mt-2">{{ question.question.text }}</h1>
+            <div class="d-flex flex-column p-4 w-100 mb-auto">
+
+                <div class="d-flex justify-content-between mb-3">
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[0])"
+                    [ngClass]="question.question.answers[0] === question.question.answer ? 'correct' : ''">
+                        {{question.question.answers[0]}}
+                    </button>
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[1])"
+                    [ngClass]="question.question.answers[1] === question.question.answer ? 'correct' : ''">
+                        {{question.question.answers[1]}}
+                    </button>
+                </div>
+                <div *ngIf="question.question.answers.length === 4" class="d-flex justify-content-between">
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[2])"
+                    [ngClass]="question.question.answers[2] === question.question.answer ? 'correct' : ''">
+                        {{question.question.answers[2]}}
+                    </button>
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[3])"
+                    [ngClass]="question.question.answers[3] === question.question.answer ? 'correct' : ''">
+                        {{question.question.answers[3]}}
+                    </button>
+                </div>
+
+                <!-- <button [disabled]="true" *ngFor="let ans of question.question.answers" (click)="answerQuestion(ans)"
+                    class="answer" [ngClass]="ans === question.question.answer ? 'correct' : ''">
+                    {{ans}} </button> -->
+
+                <h1 *ngIf="isMyQuestion" class="text-center mt-2" style="color: green;">Πήγες {{diffToStepsMap[question.question.diff]}} μπροστά</h1>
+                <h1 *ngIf="!isMyQuestion" class="text-center mt-2" style="color: #3f99ec;">
+                    Ο {{game.players[game.question.playerUid].displayName}} πήγε {{diffToStepsMap[question.question.diff]}} μπροστά
+                </h1>
+            </div>
+        </ng-template>
+
+        <ng-template [ngSwitchCase]="'finishedP'">
+            <h1 class="text-center mt-2">{{ question.question.text }}</h1>
+            <div class="d-flex flex-column p-4 w-100 mb-auto">
+
+                <div class="d-flex justify-content-between mb-3">
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[0])"
+                    [ngClass]="question.question.answers[0] === question.question.answer ? 'correct' : ''">
+                        {{question.question.answers[0]}}
+                    </button>
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[1])"
+                    [ngClass]="question.question.answers[1] === question.question.answer ? 'correct' : ''">
+                        {{question.question.answers[1]}}
+                    </button>
+                </div>
+                <div *ngIf="question.question.answers.length === 4" class="d-flex justify-content-between">
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[2])"
+                    [ngClass]="question.question.answers[2] === question.question.answer ? 'correct' : ''">
+                        {{question.question.answers[2]}}
+                    </button>
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[3])"
+                    [ngClass]="question.question.answers[3] === question.question.answer ? 'correct' : ''">
+                        {{question.question.answers[3]}}
+                    </button>
+                </div>
+
+                <!-- <button [disabled]="true" *ngFor="let ans of question.question.answers" (click)="answerQuestion(ans)"
+                    class="answer" [ngClass]="ans === question.question.answer ? 'correct' : ''">
+                    {{ans}} </button> -->
+
+                <h1 *ngIf="isMyQuestion" class="text-center mt-2" style="color: green;">Έλαβες {{question.question.qPoints}} πόντους</h1>
+                <h1 *ngIf="!isMyQuestion" class="text-center mt-2" style="color: #3f99ec;">
+                    Ο {{game.players[game.question.playerUid].displayName}} έλαβε {{question.question.qPoints}} πόντους
+                </h1>
+            </div>
+        </ng-template>
+
+        <ng-template [ngSwitchCase]="'failedM'">
+            <h1 class="text-center mt-2">{{ question.question.text }}</h1>
+            <div class="d-flex flex-column p-4 w-100 mb-auto">
+                <div class="d-flex justify-content-between mb-3">
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[0])"
+                    [ngClass]="question.question.answer === question.question.answers[0] ? 'wrong' : question.question.answers[0] === question.question.correct ? 'correct' : ''">
+                        {{question.question.answers[0]}}
+                    </button>
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[1])"
+                    [ngClass]="question.question.answer === question.question.answers[1] ? 'wrong' : question.question.answers[1] === question.question.correct ? 'correct' : ''">
+                        {{question.question.answers[1]}}
+                    </button>
+                </div>
+                <div *ngIf="question.question.answers.length === 4" class="d-flex justify-content-between">
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[2])"
+                        [ngClass]="question.question.answer === question.question.answers[2] ? 'wrong' : question.question.answers[2] === question.question.correct ? 'correct' : ''">
+                        {{question.question.answers[2]}}
+                    </button>
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[3])"
+                    [ngClass]="question.question.answer === question.question.answers[3] ? 'wrong' : question.question.answers[3] === question.question.correct ? 'correct' : ''">
+                        {{question.question.answers[3]}}
+                    </button>
+                </div>
+                <h1 *ngIf="isMyQuestion" class="text-center mt-2" style="color: #3f99ec;">
+                    Διάλεξες να πας πίσω
+                </h1>
+                <h1 *ngIf="!isMyQuestion" class="text-center mt-2" style="color: #3f99ec;">
+                    Ο {{game.players[game.question.playerUid].displayName}} διάλεξε να πάει πίσω
+                </h1>
+            </div>
+        </ng-template>
+
+        <ng-template [ngSwitchCase]="'failedP'">
+            <h1 class="text-center mt-2">{{ question.question.text }}</h1>
+            <div class="d-flex flex-column p-4 w-100 mb-auto">
+                <div class="d-flex justify-content-between mb-3">
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[0])"
+                    [ngClass]="question.question.answer === question.question.answers[0] ? 'wrong' : question.question.answers[0] === question.question.correct ? 'correct' : ''">
+                        {{question.question.answers[0]}}
+                    </button>
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[1])"
+                    [ngClass]="question.question.answer === question.question.answers[1] ? 'wrong' : question.question.answers[1] === question.question.correct ? 'correct' : ''">
+                        {{question.question.answers[1]}}
+                    </button>
+                </div>
+                <div *ngIf="question.question.answers.length === 4" class="d-flex justify-content-between">
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[2])"
+                        [ngClass]="question.question.answer === question.question.answers[2] ? 'wrong' : question.question.answers[2] === question.question.correct ? 'correct' : ''">
+                        {{question.question.answers[2]}}
+                    </button>
+                    <button [disabled]="true" mat-raised-button (click)="answerQuestion(question.question.answers[3])"
+                    [ngClass]="question.question.answer === question.question.answers[3] ? 'wrong' : question.question.answers[3] === question.question.correct ? 'correct' : ''">
+                        {{question.question.answers[3]}}
+                    </button>
+                </div>
+                <h1 *ngIf="isMyQuestion" class="text-center mt-2" style="color: #3f99ec;">
+                    Έχασες {{question.question.qPoints}} πόντους
+                </h1>
+                <h1 *ngIf="!isMyQuestion" class="text-center mt-2" style="color: #3f99ec;">
+                    Ο {{game.players[game.question.playerUid].displayName}} έχασε {{question.question.qPoints}} πόντους
+                </h1>
+            </div>
+        </ng-template>
+
+
+    </ng-container>
+</div>
