@@ -1,0 +1,222 @@
+{
+  /* Visit https://firebase.google.com/docs/database/security to learn more about security rules. */
+  "rules": {
+    "rooms": {
+      ".read": "auth.uid != null && auth.token.email_verified == true && root.child('users/'+auth.uid).exists()",
+      ".indexOn": [
+        "start"
+      ],
+      "$roomId": {
+        ".write": "root.child('users/'+auth.uid+'/inGame').val() == null && (auth.uid == newData.child('hostUid').val() || (!newData.exists() && data.child('hostUid').val() == auth.uid))",
+        "roomId": {
+          ".validate": "$roomId == newData.val()"
+        },
+        "name": {
+          ".validate": "newData.val().length < 20 && newData.val().length > 4"
+        },
+        "diff": {
+          ".validate": "newData.val() == 'easy' || newData.val() == 'medium' || newData.val() == 'hard'"
+        },
+        "isSmall": {
+          ".validate": "newData.val() == true || newData.val() == false"
+        },
+        "start": {
+          ".validate": "newData.exists() && data.parent().child('actP').val() > 1 && newData.val() == 'starting'"
+        },
+        "hostUid": {
+          ".validate": "newData.val() == auth.uid"
+        },
+        "minPoints": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() < 10000"
+        },
+        "hostName": {
+          ".validate": "newData.val() == root.child('users/'+auth.uid+'/displayName').val()"
+        },
+        "actP": {
+          ".write": "root.child('rooms/'+$roomId+'/players/'+auth.uid).exists() || auth.uid == newData.parent().child('hostUid').val()",
+          ".validate": "!data.exists() || ((data.val() - newData.val()) == 1)"
+        },
+        "max": {
+          ".validate": "newData.val() < 5 && newData.val() > 1"
+        },
+        "maxHelps": {
+          "skip": {
+            ".validate": "newData.val() >= 0 && newData.val() < 999"
+          },
+          "help_50": {
+            ".validate": "newData.val() >= 0 && newData.val() < 999"
+          }
+        },
+        "players": {
+          "$playerUid": {
+            ".write": "auth.uid === $playerUid || root.child('rooms/'+$roomId+'/hostUid').val() == auth.uid",
+            "uid": {
+              ".validate": "newData.val() == auth.uid"
+            },
+            "displayName": {
+              ".validate": "newData.val() == root.child('users/'+auth.uid+'/displayName').val()"
+            },
+            "ready": {
+              ".validate": "newData.val() == true"
+            },
+            "hero": {
+              "name": {
+                ".validate": "newData.val() == 'achilles' || newData.val() == 'hercules' || newData.val() == 'perseus' || newData.val() == 'hippolyta'"
+              }
+            },
+            "helpUsed": {
+              "skip": {
+                ".validate": "!newData.exists()"
+              },
+              "help_50": {
+                ".validate": "!newData.exists()"
+              }
+            },
+            "imageUrl": {
+              ".validate": "newData.val() == root.child('users/'+$playerUid+'/imageUrl').val()"
+            }
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "games": {
+      ".indexOn": [
+        "updatedAt"
+      ],
+      "$gameId": {
+        ".read": "auth.token.email_verified == true && root.child('games/'+$gameId+'/players/'+auth.uid).exists()",
+        ".validate": "data.exists()",
+        "gameEvent": {
+          ".write": "!newData.exists() && auth.uid == data.child('playerUid').val()"
+        },
+        "question": {
+          "question": {
+            "answer": {
+              ".write": "root.child('games/' + $gameId + '/question/playerUid').val() == auth.uid",
+              ".validate": "newData.isString() && newData.val().length < 250"
+            }
+          }
+        },
+        "players": {
+          "$uid": {
+            "position": {
+              ".write": "root.child('games/' + $gameId + '/players/' + auth.uid).exists() && root.child('games/' + $gameId + '/gameEvent/playerUid').val() == $uid && $uid == auth.uid",
+              ".validate": "(newData.val() - data.val()) == root.child('games/' + $gameId + '/gameEvent/step').val() && !newData.parent().parent().parent().child('gameEvent').exists() 
+              && root.child('games/'+$gameId+'/gameEvent/playerUid').val() == $uid"
+            },
+            "points": {
+              ".write": "root.child('games/' + $gameId + '/players/' + auth.uid).exists() && root.child('games/' + $gameId + '/gameEvent/playerUid').val() == $uid && $uid == auth.uid",
+              ".validate": "(newData.val() - data.val()) == root.child('games/' + $gameId + '/gameEvent/points').val() && !newData.parent().parent().parent().child('gameEvent').exists()
+              && root.child('games/'+$gameId+'/gameEvent/playerUid').val() == $uid"
+            }
+          }
+        },
+        "diceResult": {
+          ".write": "data.parent().child('gameEvent/playerUid').val() == auth.uid",
+          ".validate": "!newData.exists()"
+        },
+        "turnIndex": {
+          ".write": "data.parent().child('gameEvent/playerUid').val() == auth.uid",
+          ".validate": "newData.val() == data.parent().child('nextTurn').val()"
+        },
+        "nextTurn": {
+          ".write": "data.parent().child('gameEvent/playerUid').val() == auth.uid",
+          ".validate": "!newData.exists()"
+        },
+        "checkForAfk": {
+          ".write": "root.child('games/' + $gameId + '/players/' + auth.uid).exists()",
+          ".validate": "(!data.exists() && newData.child('whoChecked').val() == auth.uid && newData.child('timestamp').val() == now)
+                        || (newData.child('whoChecked').val() == auth.uid && (newData.child('timestamp').val() - data.child('timestamp').val()) >= 60000)"
+        }
+      }
+    },
+    "users": {
+      "$userUid": {
+        ".read": "auth.uid == $userUid || root.child('userFriends/' + auth.uid + '/' + $userUid).exists()",
+        ".write": "auth.uid == $userUid",
+        "uid": {
+          ".validate": "auth.uid == newData.val()"
+        },
+        "displayName": {
+          ".validate": "newData.isString() && newData.val().length > 1 && newData.val().length < 100"
+        },
+        "email": {
+          ".validate": "newData.val() == auth.token.email"
+        },
+        "createdAt": {
+          ".validate": "newData.val() == now"
+        },
+        "imageUrl": {
+          ".validate": "newData.isString() && auth.token.email_verified == true"
+        },
+        "lastOnline": {
+          ".validate": "newData.val() == now"
+        },
+        "active": {
+          ".validate": "newData.val() == true || newData.val() == false"
+        },
+        "inGame": {
+          ".validate": "'' == 'This will be written by a function'"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "userFriends": {
+      "$uid": {
+        ".read": "auth.token.email_verified == true && auth.uid == $uid",
+        "$friendUid": {
+          ".read": "auth.uid == $friendUid"
+        }
+      }
+    },
+    "pendingFriendInvite": {
+      "$friendUid": {
+        ".read": "auth.token.email_verified == true && auth.uid == $friendUid",
+        "$uid": { // The new friend that invited $friendUid
+          ".read": "auth.token.email_verified == true && auth.uid == $uid",
+          ".write": "(auth.uid == $friendUid || auth.uid == $uid) && !root.child('userFriends/' + auth.uid + '/' + $friendUid).exists()"
+        }
+      }
+    },
+    "gameInvites": {
+      "$uid": {
+        ".read": "auth.token.email_verified == true && auth.uid == $uid",
+        "$friendUid": { // The new friend that invited $friendUid
+          ".read": "auth.token.email_verified == true && auth.uid == $friendUid",
+          ".write": "auth.uid == $friendUid || auth.uid == $uid",
+          ".validate": "!root.child('rooms/' + newData.child('roomId').val() + '/players/' + $uid).exists() || !newData.exists()",
+        }
+      }
+    },
+    "pendingGameInvites": {
+      "$uid": {
+        ".read": "auth.token.email_verified == true && auth.uid == $uid",
+        "$friendUid": {
+          ".read": "auth.token.email_verified == true && auth.uid == $friendUid",
+          ".write": "(auth.uid == $friendUid || auth.uid == $uid)",
+          ".validate": "!root.child('rooms/' + newData.child('roomId').val() + '/players/' + $friendUid).exists() || !newData.exists()"
+        }
+      }
+    },
+    "questions": {
+      "$id": {
+        ".read": "auth.token.email_verified == true && auth.uid != null"
+      }
+    },
+    "questionAnswers": {
+      "$id": {
+        ".read": "auth.token.email_verified == true && auth.uid != null"
+      }
+    },
+    "gameEvents": {
+      "$id": {
+        ".read": "auth.token.email_verified == true && auth.uid != null"
+      }
+    }
+  }
+}

@@ -15,6 +15,7 @@ import { onMounted, onBeforeUnmount } from 'vue';
 import VerifiedWrapper from './VerifiedWrapper.vue';
 import VerifiedHeader from './VerifiedHeader.vue';
 import VerifiedResendEmail from './VerifiedResendEmail.vue';
+import { testFn } from '@/firebase';
 
 const userStore = useUserStore();
 const { logoutUser, sendVerification, checkForVerification } = userStore;

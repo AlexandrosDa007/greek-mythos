@@ -82,14 +82,14 @@ export const useUserStore = defineStore('user', {
             }
         },
         initializeUserSubscription() {
-            const unsubscribe = onAuthStateChanged(auth, (user) => {
-                console.log('dear god2');
+            const unsubscribe = onAuthStateChanged(auth, async (user) => {
+                console.log('dear god2', user);
                 if (user) {
                     const _isLoading = this.getIsLoading;
                     this.userRecord = user;
+                    
+                    await (_isLoading && this.fetchUserProfile());
                     this.isUserLoggedIn = true;
-
-                    _isLoading && this.fetchUserProfile();
                     if (router.currentRoute.value.name === 'Login') {
                         router.push('/');
                     }

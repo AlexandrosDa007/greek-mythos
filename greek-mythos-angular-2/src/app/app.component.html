@@ -1,0 +1,17 @@
+<app-login class="w-100 content" *ngIf="user === null"></app-login>
+
+<div *ngIf="user !== null && user?.emailVerified === true" class="content">
+    <app-main-nav *ngIf="user" (onLogout)="logout()"></app-main-nav>
+    <div *ngIf="user" class="w-100 position-relative">
+        <router-outlet ></router-outlet>
+    </div>
+</div>
+
+<div *ngIf="user?.emailVerified === false" class="content">
+    <app-verify></app-verify>
+</div>
+
+
+
+
+<!-- <app-game *ngIf="user" [user]="user"></app-game> -->

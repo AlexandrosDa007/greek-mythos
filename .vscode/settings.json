@@ -1,0 +1,8 @@
+{
+    "typescript.preferences.importModuleSpecifier": "non-relative",
+    "eslint.workingDirectories": [
+        {
+            "directory": "greek-mythos-vue"
+        }
+    ]
+}

@@ -5,3 +5,7 @@ declare module '*.vue' {
   const component: DefineComponent<{}, {}, any>
   export default component
 }
+
+declare module 'roll-a-die' {
+  export default function rollADie(options: any): void;
+}

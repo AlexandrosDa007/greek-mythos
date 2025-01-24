@@ -1,0 +1,30 @@
+button {
+    outline: 0;
+}
+
+mat-icon {
+    width: 30px;
+    height: 25px;
+}
+
+.friends-container {
+    border: 1px solid #c3c3c361;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    overflow-y: auto;
+    border-radius: 5px;
+}
+
+.friend {
+    color: #000;
+}
+
+.accepted {
+    color: green;
+}
+
+.declined {
+    color: red;
+}

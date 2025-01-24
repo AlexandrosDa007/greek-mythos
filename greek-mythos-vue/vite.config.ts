@@ -8,6 +8,12 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      'roll-a-die': path.resolve(__dirname, './roll-a-die/roll-a-die.js')
     }
+  },
+  optimizeDeps: {
+    include: [
+      "roll-a-die",
+    ]
   }
 })

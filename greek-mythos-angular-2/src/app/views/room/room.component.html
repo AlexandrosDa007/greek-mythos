@@ -1,0 +1,24 @@
+<div *ngIf="room && user" class="room mt-5">
+    <h2> {{room.name}} <mat-icon *ngIf="isHost" svgIcon="crown"></mat-icon>
+    </h2>
+    <div class="players">
+        <div *ngFor="let player of $any(room.players |keyvalue); trackBy: trackById" class="d-flex align-items-center" [ngClass]="{'ready': player.value.ready}">
+            <div class="player-set">
+                <app-profile-img [imgUrl]="player.value.imageUrl" [size]="{width: 50, height: 50}"></app-profile-img>
+                <span class="ml-2 mr-auto"> {{player.value.displayName}} {{player.value.uid === user.uid ? ' (you)' : ''}} <mat-icon
+                        *ngIf="player.value.uid === room.hostUid" svgIcon="crown"></mat-icon> </span>
+                <button mat-raised-button *ngIf="isHost && player.key !== user.uid" (click)="kick(player.value)">
+                    <!-- <mat-icon svgIcon="out"></mat-icon> -->Διώξε
+                </button>
+            </div>
+            <mat-icon *ngIf="player.value.ready" svgIcon="check"></mat-icon>
+        </div>
+        <button mat-raised-button (click)="invitePlayers()">
+            <mat-icon class="invite-icon" svgIcon="invite"></mat-icon>
+            Πρόσκληση
+        </button>
+    </div>
+    <button mat-raised-button class="leave-btn py-2" (click)="leaveGame()">Έξοδος</button>
+    <button *ngIf="!isHost" mat-raised-button class="start-btn" (click)="ready()">Έτοιμος</button>
+    <button [disabled]="!checkForReady()" *ngIf="isHost" mat-raised-button class="start-btn py-2" (click)="startGame()">Ξεκινήσε</button>
+</div>

@@ -1,0 +1,14 @@
+:host {
+    width: 100%;
+}
+
+.verify-container {
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+button {
+    outline: 0;
+    max-width: 200px;
+}

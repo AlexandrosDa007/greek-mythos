@@ -1,0 +1,82 @@
+/* You can add global styles to this file, and also import other style files */
+
+$navbar-color: #3f99ec;
+$nav-item-pressed: #286aa8;
+$nav-item-text: #000000;
+$nav-item-highlight-text: #ffffff;
+$error-red: rgb(161, 29, 29);
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    background: #ebebeb;
+    font-family: "Roboto";
+}
+
+.link {
+    color: #6078ff;
+    cursor: pointer;
+}
+html,
+body {
+    height: 100%;
+}
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.elevated-card {
+    background-color: white;
+    box-shadow:
+        0 3px 6px rgba(0, 0, 0, 0.08),
+        0 3px 6px rgba(0, 0, 0, 0.16);
+    border-radius: 0.4em;
+    margin: 1em;
+}
+
+.greyout {
+    color: #727272 !important;
+    font-style: italic;
+}
+
+.mat-progress-spinner circle,
+.mat-spinner circle {
+    stroke: $navbar-color;
+}
+
+mat-progress-bar {
+    border-radius: 10px;
+    height: 15px !important;
+}
+
+mat-progress-bar .mat-progress-bar-buffer {
+    background: #b2d1ee;
+}
+
+mat-progress-bar .mat-progress-bar-fill::after {
+    background: $navbar-color;
+}
+
+.error-snack {
+    background: $error-red;
+    color: white;
+}
+
+.success-snack {
+    background: rgb(46, 150, 46);
+    color: white;
+}
+
+.info-snack {
+    background: #ffd740;
+    color: black;
+}

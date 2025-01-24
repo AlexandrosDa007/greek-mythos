@@ -1,0 +1,89 @@
+
+<div class="login">
+
+</div>
+<div class="p-5 w-100 d-flex flex-column">
+    <div class="elevated-card login-container">
+        <div class="d-flex flex-column p-4 h-100" *ngIf="!showRegister && !showReset">
+            <mat-form-field appearance="fill">
+                <mat-label>Το email σου</mat-label>
+                <input required matInput type="email" email [(ngModel)]="email">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Ο κωδικός σου</mat-label>
+                <input matInput [(ngModel)]="password" [type]="hide ? 'password' : 'text'">
+                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                    [attr.aria-pressed]="hide">
+                    <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+            </mat-form-field>
+
+            <button class="login-btn" mat-raised-button (click)="login()">Σύνδεση</button>
+            <div class="mt-auto mb-2">
+                Δεν είσαι χρήστης;
+                <span (click)="showRegister = !showRegister" class="link">Εγγραφή</span>
+                
+            </div>
+            <span  (click)="showReset = true" class="link">Ξέχασες τον κωδικό σου;</span>
+        </div>
+
+        <div class="d-flex flex-column p-4 h-100" *ngIf="showRegister && !showReset">
+
+            <mat-form-field appearance="fill">
+                <mat-label>Το email σου</mat-label>
+                <input type="email" required matInput email [(ngModel)]="newUser.email">
+                <mat-error>Λάθος μορφή email</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Το όνομα σου</mat-label>
+                <input type="text" required matInput [(ngModel)]="newUser.displayName">
+                <mat-error
+                    *ngIf="!newUser.displayName || newUser.displayName === '' || newUser.displayName.length < 2 || newUser.displayName.length > 40">
+                    Το όνομα πρέπει να είναι μεταξύ 3 και 40 χαρακτήρων
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Ο κωδικός σου</mat-label>
+                <input required matInput [(ngModel)]="newUser.password" [type]="hideRegister ? 'password' : 'text'">
+                <button mat-icon-button matSuffix (click)="hideRegister = !hideRegister"
+                    [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideRegister">
+                    <mat-icon>{{hideRegister ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error *ngIf="newUser.password.length < 8">Ο κωδικός πρέπει να είναι μεγαλύτερος από 8 χαρακτήρες
+                </mat-error>
+                <mat-error *ngIf="newUser.password !== newUser.passwordConfirm">Οι δύο κωδικοί πρέπει να είναι ίδιοι
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="fill">
+                <mat-label>Επιβεβαίωση κωδικού</mat-label>
+                <input required matInput [(ngModel)]="newUser.passwordConfirm"
+                    [type]="hideConfirmRegister ? 'password' : 'text'">
+                <button mat-icon-button matSuffix (click)="hideConfirmRegister = !hideConfirmRegister"
+                    [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hideConfirmRegister">
+                    <mat-icon>{{hideConfirmRegister ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error *ngIf="newUser.password.length < 8">Ο κωδικός πρέπει να είναι μεγαλύτερος απο 8 χαρακτήρες
+                </mat-error>
+                <mat-error *ngIf="newUser.password !== newUser.passwordConfirm">Οι δύο κωδικοί πρέπει να είναι ίδιοι
+                </mat-error>
+            </mat-form-field>
+            <button class="login-btn" mat-raised-button (click)="register()">Εγγραφή</button>
+            <span>Έχεις ήδη λογαριασμό; <span (click)="showRegister = !showRegister" class="link">Σύνδεση</span></span>
+        </div>
+
+        <div *ngIf="showReset" class="d-flex flex-column p-4 h-100">
+            <h4>Συμπλήρωσε το email σου και πάτα "Επαναφορά κωδικού" για να λάβεις ενα email αλλαγής κωδικού</h4>
+        
+            <mat-form-field class="mt-5" appearance="fill">
+                <mat-label>Το email σου</mat-label>
+                <input type="email" required matInput email [(ngModel)]="resetPasswordEmail">
+                <mat-error>Λάθος μορφή email</mat-error>
+            </mat-form-field>
+
+            <button class="mt-auto mb-3" mat-raised-button (click)="resetPassword()">Επαναφορά κωδικού</button>
+            <span class="link" (click)="showReset = false; showRegister = false">Επιστροφή</span>
+        </div>
+    </div>
+</div>
